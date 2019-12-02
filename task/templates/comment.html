@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<div>
+    <div style="border: solid black 2px;">
+        <h4>Title: {{ post.title }}</h4>
+        <p>{{ post.content }}</p>
+        <span>{{ post.author }}</span> | Like: {{ post.like }}
+        <span>{{ post.published }}</span>
+    </div>
+    <button>Like</button>
+    <div>
+        <h3>Add comment</h3>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <p><label><textarea name="content" placeholder="comment"></textarea></label></p>
+            <input name="post_id" type="number" value="{{ post.id }}" hidden>
+            <p><label><input type="submit" value="comment"></label></p>
+        </form>
+    </div>
+    {% for comment in comments %}
+        <div style="border: solid black 2px;">
+            <p>{{ comment.content }}</p>
+            <p>{{ comment.author }} | published: {{ comment.published }}</p>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,11 @@
+
+{% block content %}
+<div>
+    <form action="{% url 'addpost' %}" method="POST">
+        {% csrf_token %}
+        {{ add_post_form.as_p }}
+        <input type="submit" value="Add post">
+    </form>
+</div>
+
+{% endblock %}

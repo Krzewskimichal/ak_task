@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="background-color: #222;">
+    <h3 style="color: white; text-align: center; margin: 10px; padding: 10px;">Posts</h3>
+</div>
+<div>
+    {% for i in posts %}
+        <div style="border: solid black 2px;">
+            <h4>Title: {{ i.title }}</h4>
+            <p>{{ i.content }}</p>
+            <span>{{ i.author }}</span> | Like: {{ i.like }} |
+
+            <span>{{ i.published }}</span>
+        </div>
+        <button>Like</button>
+        <form action="{% url 'comments' %}" method="GET">
+            {% csrf_token %}
+            <input name="post_id" value="{{ i.id }}" type="number" hidden>
+            <input type="submit" value="Comments">
+        </form>
+
+    {% endfor %}
+</div>
+{% endblock %}

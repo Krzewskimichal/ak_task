@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Akanza task</title>
+</head>
+<body>
+<a href="{% url 'main_site' %}"><h1>Akanza task</h1></a>
+<div>
+    {% if logged %}
+        <h3>Hello {{ username }}</h3>
+        <button><a href="{% url 'logout' %}">Logout</a></button>
+        <button><a href="{% url 'addpost' %}">Add post</a></button>
+        <button><a href="{% url 'activityservice' %}">Activity Servie</a></button>
+    {% else %}
+    <p>You have to be logged, if you want add posts.</p>
+    <form action="{% url 'login' %}" method="POST">
+        {% csrf_token %}
+        {{ login_form.as_p }}
+        <label><input type="submit" value="login"></label>
+    </form>
+    <button><a href="{% url 'register' %}">Register</a></button>
+    {% endif %}
+</div>
+{% block content %}{% endblock %}
+</body>
+</html>

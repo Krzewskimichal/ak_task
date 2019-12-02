@@ -1,0 +1,38 @@
+<a href="{% url 'main_site' %}"><h1>Akanza task</h1></a>
+{% block content %}
+<h1>Activity Service</h1>
+{% if get_method %}
+    <div>
+        <form action="{% url 'activityservice' %}" method="POST">
+            {% csrf_token %}
+            <input list="users" name="user">
+                <datalist id="users">
+                    {% for i in users %}
+                        <option value="{{ i }}">
+                    {% endfor %}
+                </datalist>
+            <input type="submit">
+        </form>
+    </div>
+{% else %}
+
+<div>
+    <h3>{{ user }}</h3>
+    <h1>Posts</h1>
+    {% for post in posts %}
+        <p><span>{{ user }}</span> add post: <span>{{ post.title }}</span></p>
+        <p>{{ post.content }}</p>
+        <p>{{ post.published }}</p>
+    {% endfor %}
+
+    <h1>Comments</h1>
+    {% for comment in comments %}
+        <p><span>{{ user }}</span> commented {{ comment.title }} post, added by <span>{{ comment.target_post.author }}
+        </span>.</p>
+        <p><span>Content: </span>{{ comment.content }}</p>
+        <p>Comment added: {{ comment.published }}</p>
+    {% endfor %}
+    
+{% endif %}
+</div>
+{% endblock %}
