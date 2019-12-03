@@ -4,14 +4,20 @@
     <h3 style="color: white; text-align: center; margin: 10px; padding: 10px;">Posts</h3>
 </div>
 <div>
+    {% if messages %}
+       {% for message in messages %}
+           <p style="color: red;">{{ message }}</p>
+       {% endfor %}
+    {% endif %}
     {% for i in posts %}
         <div style="border: solid black 2px;">
             <h4>Title: {{ i.title }}</h4>
             <p>{{ i.content }}</p>
             <span>{{ i.author }}</span> | Like: {{ i.like }} |
 
-            <span>{{ i.published }}</span>
+            <span>{{ i.published.0 }} {{ i.published.1 }} {{ i.published.2 }} ago</span>
         </div>
+
         <form action="{% url 'likepost' %}" method="GET">
             {% csrf_token %}
             <input type="number" name="id" value="{{ i.id }}" hidden>

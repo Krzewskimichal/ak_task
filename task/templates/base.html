@@ -14,7 +14,7 @@
         <button><a href="{% url 'addpost' %}">Add post</a></button>
         <button><a href="{% url 'activityservice' %}">Activity Servie</a></button>
     {% else %}
-    <p>You have to be logged, if you want add posts.</p>
+    <p>You have to be logged, if you want add posts and use Activity Service</p>
     <form action="{% url 'login' %}" method="POST">
         {% csrf_token %}
         {{ login_form.as_p }}

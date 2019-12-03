@@ -3,14 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="83087432-cc1d-440b-84a7-653960d55981" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/task/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/task/migrations/0002_auto_20191202_1716.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/task/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/task/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/task/templates/activityservice.html" beforeDir="false" afterPath="$PROJECT_DIR$/task/templates/activityservice.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/task/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/task/templates/base.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/task/templates/comment.html" beforeDir="false" afterPath="$PROJECT_DIR$/task/templates/comment.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/task/templates/mainsite.html" beforeDir="false" afterPath="$PROJECT_DIR$/task/templates/mainsite.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/task/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/task/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/task/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/task/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

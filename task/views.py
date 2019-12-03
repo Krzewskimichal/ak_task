@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from task.models import PostModel, UserModel, CommentModel, CommentsLikesModel, PostsLikesModel
 from datetime import datetime
+from math import ceil
+from django.contrib import messages
 
 
 class MainSiteView(View):
@@ -13,6 +15,9 @@ class MainSiteView(View):
     """
     def get(self, request):
         posts = PostModel.objects.all().order_by('published')
+        for post in posts:
+            post.published = time_count(post.published)
+
         data = {
             'posts': posts,
         }
@@ -57,9 +62,13 @@ def login_view(request):
     """
     username = request.POST['username']
     password = request.POST['password']
-    user = authenticate(username=username, password=password)
-    login(request, user)
-    return redirect('/')
+    if authenticate(username=username, password=password):
+        user = authenticate(username=username, password=password)
+        login(request, user)
+        return redirect('/')
+    else:
+        messages.error(request, 'Incorrect login or password.')
+        return redirect('/')
 
 
 def logout_view(request):
@@ -100,7 +109,10 @@ class CommentsView(View):
     def get(self, request):
         post_id = request.GET['post_id']
         post = PostModel.objects.get(id=post_id)
+        post.published = time_count(post.published)
         comments = CommentModel.objects.filter(target_post=post.id)
+        for coment in comments:
+            coment.published = time_count(coment.published)
         data = {
             'post': post,
             'comments': comments,
@@ -118,14 +130,44 @@ class CommentsView(View):
 
 
 def time_count(date):
+    """
+    get date and return time in seconds
+    """
     now = datetime.now().timestamp()
-    publicshed = date.timestamp()
-    time = now - publicshed
-    return time
+    published = date.timestamp()
+    time = now - published
+
+    if time < 3600:  # minutes
+        time /= 60
+        time = ceil(time)
+        time_mark = 'minutes'
+    elif 3600 <= time < 86400:  # houres
+        time /= 3600
+        time = ceil(time)
+        time_mark = 'hours'
+    elif 86400 <= time < 604800:  # days
+        time /= 86400
+        time = ceil(time)
+        time_mark = 'days'
+    elif 604800 <= time < 2630000:  # weeks
+        time /= 604800
+        time = ceil(time)
+        time_mark = 'weeks'
+    elif 2630000 <= time < 31536000:  # months
+        time /= 2630000
+        time = ceil(time)
+        time_mark = 'months'
+    else:  # years
+        time /= 31536000
+        time = ceil(time)
+        time_mark = 'years'
+    return time, time_mark
 
 
 class ActivityService(View):
-
+    """
+    when get method, selsect user, then choice activity
+    """
     def get(self, request):
         get_method = True
         users = User.objects.all()
@@ -156,29 +198,46 @@ def like_post_view(request):
     """
     get post_id and add like to database
     """
-    user = request.user
-    post_id = request.GET['id']
-    post = PostModel.objects.get(id=post_id)
-    like_post = PostsLikesModel(user=user, post=post)
-    like_post.save()
+    #  check if user is logged
+    if request.user.is_authenticated:
+        user = request.user
+        post_id = request.GET['id']
+        post = PostModel.objects.get(id=post_id)
+        #  check if user liked post eariler
+        if PostsLikesModel.objects.filter(user=user, post=post):
+            messages.error(request, 'Your already liked this post.')
+            return redirect('/')
+        else:
+            like_post = PostsLikesModel(user=user, post=post)
+            like_post.save()
 
-    post.like += 1
-    post.save()
+            post.like += 1
+            post.save()
 
-    return redirect('/')
+        return redirect('/')
+    else:
+        messages.error(request, 'You have to be logged..')
+        return redirect('/')
 
 
 def like_comment_view(request):
     """
     get post_id and add like to database
     """
-    user = request.user
-    comment_id = request.GET['id']
-    comment = CommentModel.objects.get(id=comment_id)
-    like_comment = CommentsLikesModel(user=user, comment=comment)
-    like_comment.save()
+    if request.user.is_authenticated:
+        user = request.user
+        comment_id = request.GET['id']
+        comment = CommentModel.objects.get(id=comment_id)
+        if CommentsLikesModel.objects.filter(user=user, comment=comment):
+            messages.error(request, 'Your already liked this comment.')
+            return redirect('/')
+        like_comment = CommentsLikesModel(user=user, comment=comment)
+        like_comment.save()
 
-    comment.like += 1
-    comment.save()
+        comment.like += 1
+        comment.save()
 
-    return redirect('/')
+        return redirect('/')
+    else:
+        messages.error(request, 'You have to be logged.')
+        return redirect('/')

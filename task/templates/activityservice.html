@@ -1,4 +1,4 @@
-<a href="{% url 'main_site' %}"><h1>Akanza task</h1></a>
+<a href="{% url 'main_site' %}"><h1>task</h1></a>
 {% block content %}
 <h1>Activity Service</h1>
 {% if get_method %}
@@ -53,14 +53,14 @@
     {% for comment in comments_likes %}
         <p><span>{{ user }}</span> liked comment: {{ comment.comment.content }}</p>
         <p>added by <span>{{ comment.comment.author }}</span></p>
-        <p>date: {{ post.date }}</p>
+        <p>date: {{ comment.date }}</p>
     {% endfor %}
 
 </div>
 
 <div id="posts_likes" style="display: none;">
-    <h1>Comments</h1>
-    {% for post in post_likes %}
+    <h1>Posts</h1>
+    {% for post in posts_likes %}
         <p><span>{{ user }}</span> liked post: {{ post.post.title }}
         <p>added by <span>{{ post.target_user.username }}</span></p>
         <p>date: {{ post.date }}</p>
@@ -78,7 +78,6 @@
 
     var x = document.getElementById("select").value;
     document.getElementById(x).style.display = "block";
-    console.log(x);
     }
 </script>
 {% endblock %}

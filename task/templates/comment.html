@@ -4,8 +4,8 @@
     <div style="border: solid black 2px;">
         <h4>Title: {{ post.title }}</h4>
         <p>{{ post.content }}</p>
-        <span>{{ post.author }}</span> | Like: {{ post.like }}
-        <span>{{ post.published }}</span>
+        <span>{{ post.author }}</span> | Like: {{ post.like }} |
+        <span>{{ post.published.0 }} {{ post.published.1 }} ago</span>
     </div>
     <button>Like</button>
     <div>
@@ -17,10 +17,16 @@
             <p><label><input type="submit" value="comment"></label></p>
         </form>
     </div>
+    {% if messages %}
+       {% for message in messages %}
+           <p style="color: red;">{{ message }}</p>
+       {% endfor %}
+    {% endif %}
     {% for comment in comments %}
         <div style="border: solid black 2px;">
             <p>{{ comment.content }}</p>
-            <p>{{ comment.author }} | like: {{ comment.like }} | published: {{ comment.published }}</p>
+            <p>{{ comment.author }} | like: {{ comment.like }} | published: {{ comment.published.0 }}
+                {{ comment.published.1 }} ago</p>
         </div>
         <form action="{% url 'likecomment' %}" method="GET">
             {% csrf_token %}
