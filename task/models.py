@@ -24,16 +24,16 @@ class CommentModel(models.Model):
     content = models.TextField(blank=False, max_length=1024)
     published = models.DateTimeField(auto_now=True)
     target_post = models.ForeignKey(PostModel, on_delete=models.CASCADE)
+    like = models.IntegerField(default=0)
 
 
-class UsersActivityModel(models.Model):
+class PostsLikesModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    # if user add post, target_user can be blank
-    target_user = models.ForeignKey(User, related_name='target_user', on_delete=models.CASCADE, blank=True, null=True)
-    activity_choices = [
-        ('subscribe', 'subscribe'),
-        ('post', 'post'),
-        ('comment', 'comment'),
-        ('like', 'like'),
-    ]
-    activity = models.CharField(max_length=32, choices=activity_choices, default='post', blank=False)
+    post = models.ForeignKey(PostModel, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now=True)
+
+
+class CommentsLikesModel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.ForeignKey(CommentModel, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now=True)

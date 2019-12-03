@@ -17,22 +17,68 @@
 {% else %}
 
 <div>
+    <select id="select">
+        <option value="div_posts">posts</option>
+        <option value="div_comments">comments</option>
+        <option value="comments_likes">likes comments</option>
+        <option value="posts_likes">likes posts</option>
+    </select>
+</div>
+
+<p><button onclick="select_function()">Select</button></p>
+
+<div id="div_posts" style="display: none;">
     <h3>{{ user }}</h3>
     <h1>Posts</h1>
     {% for post in posts %}
-        <p><span>{{ user }}</span> add post: <span>{{ post.title }}</span></p>
+        <p><span>{{ user }}</span> added post: <span>{{ post.title }}</span></p>
         <p>{{ post.content }}</p>
         <p>{{ post.published }}</p>
     {% endfor %}
+</div>
 
+<div id="div_comments" style="display: none;">
     <h1>Comments</h1>
     {% for comment in comments %}
         <p><span>{{ user }}</span> commented {{ comment.title }} post, added by <span>{{ comment.target_post.author }}
-        </span>.</p>
+        </span></p>
         <p><span>Content: </span>{{ comment.content }}</p>
         <p>Comment added: {{ comment.published }}</p>
     {% endfor %}
-    
+
+</div>
+
+<div id="comments_likes" style="display: none;">
+    <h1>Comments</h1>
+    {% for comment in comments_likes %}
+        <p><span>{{ user }}</span> liked comment: {{ comment.comment.content }}</p>
+        <p>added by <span>{{ comment.comment.author }}</span></p>
+        <p>date: {{ post.date }}</p>
+    {% endfor %}
+
+</div>
+
+<div id="posts_likes" style="display: none;">
+    <h1>Comments</h1>
+    {% for post in post_likes %}
+        <p><span>{{ user }}</span> liked post: {{ post.post.title }}
+        <p>added by <span>{{ post.target_user.username }}</span></p>
+        <p>date: {{ post.date }}</p>
+    {% endfor %}
+
 {% endif %}
 </div>
+
+<script>
+    function select_function(){
+    document.getElementById("div_posts").style.display = "none";
+    document.getElementById("div_comments").style.display = "none";
+    document.getElementById("comments_likes").style.display = "none";
+    document.getElementById("posts_likes").style.display = "none";
+
+    var x = document.getElementById("select").value;
+    document.getElementById(x).style.display = "block";
+    console.log(x);
+    }
+</script>
 {% endblock %}

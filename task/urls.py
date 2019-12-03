@@ -1,5 +1,6 @@
 from django.urls import path
-from task.views import MainSiteView, RegisterView, logout_view, login_view, PostView, CommentsView, ActivityService
+from task.views import MainSiteView, RegisterView, logout_view, login_view, PostView, CommentsView, ActivityService, \
+    like_post_view, like_comment_view
 
 
 urlpatterns = [
@@ -12,5 +13,8 @@ urlpatterns = [
     path('addpost/', PostView.as_view(), name='addpost'),
     path('comments/', CommentsView.as_view(), name='comments'),
     # activityservice
-    path('activityservice/', ActivityService.as_view(), name='activityservice')
+    path('activityservice/', ActivityService.as_view(), name='activityservice'),
+    # add like
+    path('likepost/', like_post_view, name='likepost'),
+    path('likecomment/', like_comment_view, name='likecomment'),
 ]

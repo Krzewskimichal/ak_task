@@ -3,7 +3,7 @@ from django.views import View
 from task.forms import RegisterForm, LoginForm, PostForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
-from task.models import PostModel, UserModel, CommentModel
+from task.models import PostModel, UserModel, CommentModel, CommentsLikesModel, PostsLikesModel
 from datetime import datetime
 
 
@@ -77,7 +77,7 @@ class PostView(View):
     View display all posts
     """
     def get(self, request):
-        form = AddPostForm()
+        form = PostForm()
         data = {
             'add_post_form': form,
         }
@@ -140,9 +140,45 @@ class ActivityService(View):
         user = User.objects.get(username=user)
         posts = PostModel.objects.filter(author=user).order_by('published')
         comments = CommentModel.objects.filter(author=user).order_by('published')
+        comments_likes = CommentsLikesModel.objects.filter(user=user)
+        posts_likes = PostsLikesModel.objects.filter(user=user)
         data = {
             'user': user,
             'comments': comments,
             'posts': posts,
+            'comments_likes': comments_likes,
+            'posts_likes': posts_likes,
         }
         return render(request, 'activityservice.html', data)
+
+
+def like_post_view(request):
+    """
+    get post_id and add like to database
+    """
+    user = request.user
+    post_id = request.GET['id']
+    post = PostModel.objects.get(id=post_id)
+    like_post = PostsLikesModel(user=user, post=post)
+    like_post.save()
+
+    post.like += 1
+    post.save()
+
+    return redirect('/')
+
+
+def like_comment_view(request):
+    """
+    get post_id and add like to database
+    """
+    user = request.user
+    comment_id = request.GET['id']
+    comment = CommentModel.objects.get(id=comment_id)
+    like_comment = CommentsLikesModel(user=user, comment=comment)
+    like_comment.save()
+
+    comment.like += 1
+    comment.save()
+
+    return redirect('/')

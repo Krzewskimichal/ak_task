@@ -12,7 +12,12 @@
 
             <span>{{ i.published }}</span>
         </div>
-        <button>Like</button>
+        <form action="{% url 'likepost' %}" method="GET">
+            {% csrf_token %}
+            <input type="number" name="id" value="{{ i.id }}" hidden>
+            <input type="submit" value="Like">
+        </form>
+
         <form action="{% url 'comments' %}" method="GET">
             {% csrf_token %}
             <input name="post_id" value="{{ i.id }}" type="number" hidden>
