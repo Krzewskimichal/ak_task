@@ -1,11 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.models import ContentType
 
 
-# additional content for users
+# user subscribtions
 class UserModel(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    user_subscribe = models.IntegerField(default=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_subscribe = models.ForeignKey(User, related_name='user_subscribe', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user_target
 
 
 class PostModel(models.Model):
@@ -27,13 +32,22 @@ class CommentModel(models.Model):
     like = models.IntegerField(default=0)
 
 
-class PostsLikesModel(models.Model):
+class LikesModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(PostModel, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now=True)
+    #  todo |name Active is not defined| dlaczego?
+    # object = GenericRelation(Active)
 
 
-class CommentsLikesModel(models.Model):
+class Active(models.Model):
+    activity = (
+        ('p', 'post'),
+        ('l', 'ike'),
+        ('c', 'comment'),
+        ('s', 'subscribe'),
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    comment = models.ForeignKey(CommentModel, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now=True)
+    activity_type = models.CharField(max_length=1, choices=activity)
+    date = models.DateTimeField(auto_now_add=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')

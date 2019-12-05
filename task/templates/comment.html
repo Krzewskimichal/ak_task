@@ -28,9 +28,9 @@
             <p>{{ comment.author }} | like: {{ comment.like }} | published: {{ comment.published.0 }}
                 {{ comment.published.1 }} ago</p>
         </div>
-        <form action="{% url 'likecomment' %}" method="GET">
+        <form action="{% url 'like' %}" method="GET">
             {% csrf_token %}
-            <input type="number" name="id" value="{{ comment.id }}" hidden>
+            <input type="number" name="comment" value="{{ comment.id }}" hidden>
             <input type="submit" value="Like">
         </form>
     {% endfor %}

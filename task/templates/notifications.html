@@ -1,0 +1,54 @@
+<a href="{% url 'main_site' %}"><h1>task</h1></a>
+{% block content %}
+<h1>Activity Service</h1>
+<h2>{{ user }}</h2>
+{% if get_method %}
+    <div>
+        <form action="{% url 'activityservice' %}" method="POST">
+            {% csrf_token %}
+            <input list="users" name="user">
+                <datalist id="users">
+                    {% for i in users %}
+                        <option value="{{ i }}">
+                    {% endfor %}
+                </datalist>
+            <input type="submit">
+        </form>
+    </div>
+{% else %}
+
+<div>
+    {% if group %}
+    <p>{{ group.0.user }} {{ group.0.get_activity_type_display }}
+        {% for user in group %}
+            {{ user.content_object.user_subscribe }}
+        {% endfor %}
+
+        {% for active in group %}
+            {{ active.content_object }},
+        {% endfor %}
+
+        {{ group.0.date.0 }}
+     {{ group.0.date.1 }} ago.</p>
+    <p>-------------------------------------------------------------------------------------------------</p>
+
+    {% endif %}
+</div>
+
+{% for i in single %}
+<p>{{ i.user }} {{ i.get_activity_type_display }}
+
+    {% if i.content_object.title %}
+        {{ i.content_object.title }},
+    {% elif i.content_object.target_post %}
+        {{ i.content_object.target_post }} post,
+    {% elif i.content_object.user_subscribe %}
+        {{ i.content_object.user_subscribe }}
+    {% endif %}
+
+    {{ i.date.0 }} {{ i.date.1 }} ago.</p>
+<p>-------------------------------------------------------------------------------------------------</p>
+{% endfor %}
+
+{% endif %}
+{% endblock %}

@@ -3,10 +3,9 @@ from django.views import View
 from task.forms import RegisterForm, LoginForm, PostForm
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
-from task.models import PostModel, UserModel, CommentModel, CommentsLikesModel, PostsLikesModel
-from datetime import datetime
-from math import ceil
+from task.models import PostModel, UserModel, CommentModel, LikesModel, Active
 from django.contrib import messages
+from task.services import time_count, ActivityService
 
 
 class MainSiteView(View):
@@ -49,8 +48,7 @@ class RegisterView(View):
                 User.objects.create_user(username=username, password=password1, email=email)
                 user = authenticate(username=username, password=password1)
                 login(request, user)
-                usermodel = UserModel(user=request.user)
-                usermodel.save()
+
                 return redirect('/')
 
 
@@ -92,6 +90,9 @@ class PostView(View):
         }
         return render(request, 'add_post.html', data)
 
+    """
+    add new posts
+    """
     def post(self, request):
         data = PostForm(request.POST)
         if data.is_valid():
@@ -99,6 +100,9 @@ class PostView(View):
             content = data.cleaned_data['content']
             post = PostModel(author=request.user, title=title, content=content)
             post.save()
+
+            active = Active(user=request.user, activity_type='p', content_object=post)
+            active.save()
             return redirect('/')
 
 
@@ -126,118 +130,103 @@ class CommentsView(View):
         author = request.user
         comment = CommentModel(author=author, content=content, target_post=target_post)
         comment.save()
+
+        active = Active(user=request.user, activity_type='c', content_object=comment)
+        active.save()
         return redirect('/')
 
 
-def time_count(date):
-    """
-    get date and return time in seconds
-    """
-    now = datetime.now().timestamp()
-    published = date.timestamp()
-    time = now - published
-
-    if time < 3600:  # minutes
-        time /= 60
-        time = ceil(time)
-        time_mark = 'minutes'
-    elif 3600 <= time < 86400:  # houres
-        time /= 3600
-        time = ceil(time)
-        time_mark = 'hours'
-    elif 86400 <= time < 604800:  # days
-        time /= 86400
-        time = ceil(time)
-        time_mark = 'days'
-    elif 604800 <= time < 2630000:  # weeks
-        time /= 604800
-        time = ceil(time)
-        time_mark = 'weeks'
-    elif 2630000 <= time < 31536000:  # months
-        time /= 2630000
-        time = ceil(time)
-        time_mark = 'months'
-    else:  # years
-        time /= 31536000
-        time = ceil(time)
-        time_mark = 'years'
-    return time, time_mark
-
-
-class ActivityService(View):
+class NotificationsView(View):
     """
     when get method, selsect user, then choice activity
     """
     def get(self, request):
-        get_method = True
-        users = User.objects.all()
+        user = request.user
+        actives = ActivityService.active(user=user)
         data = {
-            'users': users,
-            'get_method': get_method,
+            'group': actives[0],
+            'single': actives[1],
+
         }
-        return render(request, 'activityservice.html', data)
+        return render(request, 'notifications.html', data)
 
-    def post(self, request):
-        user = request.POST['user']
-        user = User.objects.get(username=user)
-        posts = PostModel.objects.filter(author=user).order_by('published')
-        comments = CommentModel.objects.filter(author=user).order_by('published')
-        comments_likes = CommentsLikesModel.objects.filter(user=user)
-        posts_likes = PostsLikesModel.objects.filter(user=user)
-        data = {
-            'user': user,
-            'comments': comments,
-            'posts': posts,
-            'comments_likes': comments_likes,
-            'posts_likes': posts_likes,
-        }
-        return render(request, 'activityservice.html', data)
+    # def post(self, request):
+    #     user = request.POST['user']
+    #     user = User.objects.get(username=user)
+    #     posts = PostModel.objects.filter(author=user).order_by('published')
+    #     comments = CommentModel.objects.filter(author=user).order_by('published')
+    #     comments_likes = CommentsLikesModel.objects.filter(user=user)
+    #     posts_likes = PostsLikesModel.objects.filter(user=user)
+    #     data = {
+    #         'user': user,
+    #         'comments': comments,
+    #         'posts': posts,
+    #         'comments_likes': comments_likes,
+    #         'posts_likes': posts_likes,
+    #     }
+    #     return render(request, 'notifications.html', data)
 
 
-def like_post_view(request):
+def like_view(request):
     """
     get post_id and add like to database
     """
     #  check if user is logged
-    if request.user.is_authenticated:
-        user = request.user
-        post_id = request.GET['id']
-        post = PostModel.objects.get(id=post_id)
-        #  check if user liked post eariler
-        if PostsLikesModel.objects.filter(user=user, post=post):
-            messages.error(request, 'Your already liked this post.')
-            return redirect('/')
-        else:
-            like_post = PostsLikesModel(user=user, post=post)
-            like_post.save()
+    # if request.user.is_authenticated:
+    #     user = request.user
+    #     comment = ''
+    #     post = ''
+    #
+    #     #  check what user liked
+    #     if 'comment' in request.GET:
+    #         comment = request.GET['comment']
+    #         obj = CommentModel.objects.get(id=comment)
+    #     else:
+    #         post = request.GET['post']
+    #         obj = PostModel.objects.get(id=post)
+    #
+    #     #  check if user liked earlier
+    #     if Active.objects.filter(user=user, content_object=obj):
+    #         messages.error(request, 'Your already liked this post.')
+    #         return redirect('/')
+    #     else:
+    #         # add like to CommentModel or LikeModel
+    #         if comment != '':
+    #             comment = CommentModel.objects.get(id=comment)
+    #             comment.like += 1
+    #             comment.save()
+    #         else:
+    #             post = PostModel.objects.ge(id=post)
+    #             post.like += 1
+    #             post.save()
+    #
+    #         active = Active(user=request.user, activity_type='l', content_object=obj)
+    #         active.save()
+    #     return redirect('/')
+    # else:
+    #     messages.error(request, 'You have to be logged..')
+    #     return redirect('/')
 
-            post.like += 1
-            post.save()
 
+def subscribe_view(request):
+    """
+    add subscriptions
+    """
+    user = request.user
+    author_id = request.POST['author_id']
+    target_user = User.objects.get(id=author_id)
+    #  check if user subscribe user earlier
+    if UserModel.objects.filter(user=user, user_subscribe=target_user):
+        messages.error('You already subscribe this user.')
+        return redirect('/')
+    #  check if user try subscribe himself
+    elif UserModel.objects.filter(user=user, user_subscribe=user):
+        messages.error('You cant subscribe your self.')
         return redirect('/')
     else:
-        messages.error(request, 'You have to be logged..')
-        return redirect('/')
+        user_model = UserModel(user=user, user_subscribe=target_user)
+        user_model.save()
 
-
-def like_comment_view(request):
-    """
-    get post_id and add like to database
-    """
-    if request.user.is_authenticated:
-        user = request.user
-        comment_id = request.GET['id']
-        comment = CommentModel.objects.get(id=comment_id)
-        if CommentsLikesModel.objects.filter(user=user, comment=comment):
-            messages.error(request, 'Your already liked this comment.')
-            return redirect('/')
-        like_comment = CommentsLikesModel(user=user, comment=comment)
-        like_comment.save()
-
-        comment.like += 1
-        comment.save()
-
-        return redirect('/')
-    else:
-        messages.error(request, 'You have to be logged.')
+        active = Active(user=user, activity_type='s', content_object=user_model)
+        active.save()
         return redirect('/')

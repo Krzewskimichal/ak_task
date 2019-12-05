@@ -12,7 +12,8 @@
         <h3>Hello {{ username }}</h3>
         <button><a href="{% url 'logout' %}">Logout</a></button>
         <button><a href="{% url 'addpost' %}">Add post</a></button>
-        <button><a href="{% url 'activityservice' %}">Activity Servie</a></button>
+        <button><a href="{% url 'notifications' %}">Notifications</a></button>
+
     {% else %}
     <p>You have to be logged, if you want add posts and use Activity Service</p>
     <form action="{% url 'login' %}" method="POST">

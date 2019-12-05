@@ -18,9 +18,9 @@
             <span>{{ i.published.0 }} {{ i.published.1 }} {{ i.published.2 }} ago</span>
         </div>
 
-        <form action="{% url 'likepost' %}" method="GET">
+        <form action="{% url 'like' %}" method="GET">
             {% csrf_token %}
-            <input type="number" name="id" value="{{ i.id }}" hidden>
+            <input type="number" name="post" value="{{ i.id }}" hidden>
             <input type="submit" value="Like">
         </form>
 
@@ -28,6 +28,12 @@
             {% csrf_token %}
             <input name="post_id" value="{{ i.id }}" type="number" hidden>
             <input type="submit" value="Comments">
+        </form>
+
+        <form action="{% url 'subscribe' %}" method="POST">
+            {% csrf_token %}
+            <input name="author_id" value="{{ i.author.id }}" type="number" hidden>
+            <input type="submit" value="Subscribe">
         </form>
 
     {% endfor %}
