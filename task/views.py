@@ -146,6 +146,7 @@ class NotificationsView(View):
         data = {
             'group': actives[0],
             'single': actives[1],
+            'all_subscribers': actives[2],
 
         }
         return render(request, 'notifications.html', data)

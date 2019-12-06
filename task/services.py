@@ -15,8 +15,13 @@ class ActivityService:
         single: contains single activities
         """
         user = kwargs['user']
-        actives = Active.objects.filter(user=user).order_by('date')
+        subscribers = UserModel.objects.filter(user=user)
+        all_subscribers = []
+        for sub in subscribers:
+            x = Active.objects.filter(user=sub.user_subscribe).order_by('-date')
+            all_subscribers.append(x)
 
+        actives = Active.objects.filter(user=user).order_by('-date')
         all_activities = []
         for active in actives:
             active.date = time_count(active.date)
@@ -38,7 +43,7 @@ class ActivityService:
             if active not in group:
                 single.append(active)
 
-        return group, single
+        return group, single, all_subscribers
 
 
 def time_count(date):
