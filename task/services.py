@@ -26,7 +26,7 @@ class ActivityService:
         all_subscribers = []
         for subscriber in sub:
             for i in subscriber:
-                    all_subscribers.append(Active.objects.filter(user=i).order_by('-date'))
+                all_subscribers.append(Active.objects.filter(user=i).order_by('-date'))
 
         one_queryset = []
         #  count time for subscribers
