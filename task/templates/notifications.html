@@ -20,9 +20,6 @@
 <div>
     {% if group %}
     <p>{{ group.0.user }} {{ group.0.get_activity_type_display }}
-        {% for user in group %}
-            {{ user.content_object.user_subscribe }}
-        {% endfor %}
 
         {% for active in group %}
             {{ active.content_object }},
@@ -35,13 +32,14 @@
     {% endif %}
 </div>
 
+{% if single %}
 {% for i in single %}
 <p>{{ i.user }} {{ i.get_activity_type_display }}
 
     {% if i.content_object.title %}
         {{ i.content_object.title }},
     {% elif i.content_object.target_post %}
-        {{ i.content_object.target_post }} post,
+        {{ i.content_object.target_post }},
     {% elif i.content_object.user_subscribe %}
         {{ i.content_object.user_subscribe }}
     {% endif %}
@@ -49,7 +47,7 @@
     {{ i.date.0 }} {{ i.date.1 }} ago.</p>
 <p>-------------------------------------------------------------------------------------------------</p>
 {% endfor %}
+{% endif %}
 
-{{ all_subscribers }}
 {% endif %}
 {% endblock %}

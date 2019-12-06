@@ -2,6 +2,7 @@ from task.models import UserModel, PostModel, CommentModel, LikesModel, Active
 from django.shortcuts import render, redirect
 from datetime import datetime
 from math import ceil
+from django.contrib.auth.models import User
 
 
 class ActivityService:
@@ -16,26 +17,42 @@ class ActivityService:
         """
         user = kwargs['user']
         subscribers = UserModel.objects.filter(user=user)
+        #  get all subscribed users
+        sub = []
+        for i in subscribers:
+            sub.append(User.objects.filter(username=i.user_subscribe))
+
+        #  get all Activities of subscribe users
         all_subscribers = []
-        for sub in subscribers:
-            x = Active.objects.filter(user=sub.user_subscribe).order_by('-date')
-            all_subscribers.append(x)
+        for subscriber in sub:
+            for i in subscriber:
+                    all_subscribers.append(Active.objects.filter(user=i).order_by('-date'))
+
+        one_queryset = []
+        #  count time for subscribers
+        for i in all_subscribers:
+            for z in i:
+                z.date = time_count(z.date)
+                one_queryset.append(z)
 
         actives = Active.objects.filter(user=user).order_by('-date')
         all_activities = []
+
         for active in actives:
             active.date = time_count(active.date)
             all_activities.append(active)
 
+        all_activities += one_queryset
         #  container for group elements
         group = []
         #  container for single elements
         single = []
 
         #  check if activities are in the same group
-        for active in actives:
-            for z in actives:
-                if active.date[0] == z.date[0] and active.date[1] == z.date[1] and active.object_id != z.object_id:
+        for active in all_activities:
+            for z in all_activities:
+                if active.date[0] == z.date[0] and active.date[1] == z.date[1] and active.object_id != z.object_id and \
+                        active.activity_type == z.activity_type and active.user == z.user and active not in group:
                     group.append(active)
 
         #  add activity to single list
@@ -43,7 +60,7 @@ class ActivityService:
             if active not in group:
                 single.append(active)
 
-        return group, single, all_subscribers
+        return group, single
 
 
 def time_count(date):

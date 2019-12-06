@@ -10,7 +10,7 @@ class UserModel(models.Model):
     user_subscribe = models.ForeignKey(User, related_name='user_subscribe', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user_target
+        return self.user_subscribe.username
 
 
 class PostModel(models.Model):
@@ -31,11 +31,14 @@ class CommentModel(models.Model):
     target_post = models.ForeignKey(PostModel, on_delete=models.CASCADE)
     like = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.target_post.title
+
 
 class LikesModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     #  todo |name Active is not defined| dlaczego?
-    # object = GenericRelation(Active)
+    #  object = GenericRelation(Active)
 
 
 class Active(models.Model):

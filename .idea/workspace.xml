@@ -3,7 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="83087432-cc1d-440b-84a7-653960d55981" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/task/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/task/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/task/services.py" beforeDir="false" afterPath="$PROJECT_DIR$/task/services.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/task/templates/notifications.html" beforeDir="false" afterPath="$PROJECT_DIR$/task/templates/notifications.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/task/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/task/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -13,7 +13,7 @@ class MainSiteView(View):
     main site
     """
     def get(self, request):
-        posts = PostModel.objects.all().order_by('published')
+        posts = PostModel.objects.all().order_by('-published')
         for post in posts:
             post.published = time_count(post.published)
 
@@ -146,26 +146,8 @@ class NotificationsView(View):
         data = {
             'group': actives[0],
             'single': actives[1],
-            'all_subscribers': actives[2],
-
         }
         return render(request, 'notifications.html', data)
-
-    # def post(self, request):
-    #     user = request.POST['user']
-    #     user = User.objects.get(username=user)
-    #     posts = PostModel.objects.filter(author=user).order_by('published')
-    #     comments = CommentModel.objects.filter(author=user).order_by('published')
-    #     comments_likes = CommentsLikesModel.objects.filter(user=user)
-    #     posts_likes = PostsLikesModel.objects.filter(user=user)
-    #     data = {
-    #         'user': user,
-    #         'comments': comments,
-    #         'posts': posts,
-    #         'comments_likes': comments_likes,
-    #         'posts_likes': posts_likes,
-    #     }
-    #     return render(request, 'notifications.html', data)
 
 
 def like_view(request):
